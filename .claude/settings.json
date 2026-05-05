@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python fetch_figma.py*)",
+      "Bash(.venv/bin/python screenshot_page.py*)",
+      "Bash(.venv/bin/python compare_images.py*)",
+      "Bash(pip install*)",
+      "Bash(playwright install*)"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+.venv/
+.env
+*.png
+report.json
+report.md
+__pycache__/
+*.pyc
