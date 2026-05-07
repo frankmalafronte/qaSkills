@@ -6,7 +6,7 @@ A collection of Claude Code sub-agents for automated QA workflows.
 
 | Agent | Trigger |
 |---|---|
-| `design-qa` | Compare a Figma design to a live page and produce a QA report |
+| `design-qa-local` | Compare a Figma design to a live page and produce a QA report (runs locally) |
 
 ## Project scripts
 

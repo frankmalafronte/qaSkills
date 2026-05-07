@@ -1,9 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(.venv/bin/python fetch_figma.py*)",
-      "Bash(.venv/bin/python screenshot_page.py*)",
-      "Bash(.venv/bin/python compare_images.py*)",
+      "Bash(.venv/bin/python *)",
+      "Bash(rm /tmp/design.png /tmp/webpage.png /tmp/comparison.png)",
+      "Bash(open report.html)",
+      "Bash(open /Users/frank/Projects/qaSkills/report.html*)",
+      "Bash(cp *)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
       "Bash(pip install*)",
       "Bash(playwright install*)"
     ]
