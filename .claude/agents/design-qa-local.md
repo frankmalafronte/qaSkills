@@ -3,13 +3,8 @@ name: design-qa-local
 description: Compares a Figma design frame to a live webpage and produces a structured QA report. Use this agent when the user provides a Figma URL and a live page URL and asks for a design review, QA check, or visual comparison. Runs locally using Playwright and local scripts.
 permissions:
   allow:
-    - "Bash(.venv/bin/python fetch_figma.py *)"
-    - "Bash(.venv/bin/python screenshot_page.py *)"
-    - "Bash(.venv/bin/python compare_images.py *)"
-    - "Bash(.venv/bin/python diff_images.py *)"
-    - "Bash(.venv/bin/python generate_report.py *)"
+    - "Bash(.venv/bin/python .claude/agents/design-qa-local/* *)"
     - "Bash(.venv/bin/pip install *)"
-    - "Bash(cp /Users/frank/Projects/qaSkills/design.png *)"
     - "Bash(open report.html)"
     - "Write(/Users/frank/Projects/qaSkills/*)"
     - "Edit(/Users/frank/Projects/qaSkills/*)"
@@ -22,7 +17,7 @@ You are a Design QA agent. When the user gives you a Figma design URL or a local
 ### 1. Obtain the design image
 **If the input is a Figma URL** — fetch it:
 ```bash
-.venv/bin/python fetch_figma.py --url "<figma_url>" --out design_fetched.png
+.venv/bin/python .claude/agents/design-qa-local/fetch_figma.py --url "<figma_url>" --out design_fetched.png
 ```
 Use `design_fetched.png` as `<design_path>` in all subsequent steps.
 
@@ -30,18 +25,18 @@ Use `design_fetched.png` as `<design_path>` in all subsequent steps.
 
 ### 2. Screenshot the live page
 ```bash
-.venv/bin/python screenshot_page.py --url "<page_url>" --out webpage.png
+.venv/bin/python .claude/agents/design-qa-local/screenshot_page.py --url "<page_url>" --out webpage.png
 ```
 A visible Chrome window will open — this is expected.
 
 ### 3. Create side-by-side comparison
 ```bash
-.venv/bin/python compare_images.py --left <design_path> --right webpage.png --out comparison.png
+.venv/bin/python .claude/agents/design-qa-local/compare_images.py --left <design_path> --right webpage.png --out comparison.png
 ```
 
 ### 3b. Compute pixel diff stats
 ```bash
-.venv/bin/python diff_images.py --design <design_path> --live webpage.png --out diff_amplified.png
+.venv/bin/python .claude/agents/design-qa-local/diff_images.py --design <design_path> --live webpage.png --out diff_amplified.png
 ```
 Prints differing pixel count, mean/max diff, and saves an amplified diff image to `diff_amplified.png`.
 
@@ -78,7 +73,7 @@ Read all three images (`<design_path>`, `webpage.png`, `comparison.png`) using y
 
 ### 6. Generate the HTML report
 ```bash
-.venv/bin/python generate_report.py \
+.venv/bin/python .claude/agents/design-qa-local/generate_report.py \
   --report report.json \
   --design <design_path> \
   --live webpage.png \
