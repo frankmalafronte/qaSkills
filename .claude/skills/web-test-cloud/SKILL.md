@@ -1,5 +1,5 @@
 ---
-name: generate-tests
+name: web-test-cloud
 description: Generate Playwright E2E tests based on free-form instructions or recent code changes
 ---
 
@@ -9,17 +9,20 @@ The user wants to generate Playwright E2E tests. Their instructions (may be empt
 
 ## What to do
 
-Dispatch the GitHub Actions workflow to generate tests in the cloud:
+1. Parse the instructions to extract the target URL (e.g. "google.com" → "https://google.com"). If no URL is found, ask the user for one before proceeding.
+
+2. Dispatch the GitHub Actions workflow, passing the extracted URL and the full original instructions:
 
 ```bash
-gh workflow run generate-e2e-tests.yml \
+gh workflow run web-test-cloud.yml \
+  -f url="<extracted-url>" \
   -f instructions="$ARGUMENTS"
 ```
 
-Then get the URL of the triggered run and report it to the user:
+3. Get the URL of the triggered run and report it to the user:
 
 ```bash
-sleep 3 && gh run list --workflow=generate-e2e-tests.yml --limit=1 --json url -q '.[0].url'
+sleep 5 && gh run list --workflow=web-test-cloud.yml --limit=1 --json url -q '.[0].url'
 ```
 
 Tell the user the run URL so they can monitor progress. Do not wait for the run to finish.

@@ -1,47 +1,16 @@
-# Design QA Agent
+# qaSkills — AI QA Agents
 
-A Claude Code showcase demonstrating vision-powered design QA. Claude Code fetches a Figma frame and a live webpage screenshot, compares them with its built-in vision, and produces a structured QA report — all without a separate API key (runs on the Pro plan).
+A collection of Claude Code agents for automated QA workflows.
 
-A visible Chrome window opens during the screenshot step so you can watch the agent work in real time.
+---
 
-## Prerequisites
+## Agents
 
-- Python 3.10+
-- A Figma account with a Personal Access Token
+### design-qa-local
 
-## Setup
+Vision-powered design QA. Fetches a Figma frame and a live webpage screenshot, compares them with Claude's built-in vision, and produces a structured HTML report. Runs locally — a visible Chrome window opens during the screenshot step.
 
-1. Clone the repo:
-   ```bash
-   git clone <repo-url>
-   cd qaSkills
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Install the Playwright browser:
-   ```bash
-   playwright install chromium
-   ```
-
-4. Configure your Figma token:
-   ```bash
-   cp .env.example .env
-   # Edit .env and paste your Figma Personal Access Token
-   ```
-   Get a token at: **figma.com → Settings → Security → Personal access tokens**
-
-5. Open this folder in Claude Code:
-   ```bash
-   claude .
-   ```
-
-## Usage
-
-Paste this prompt into Claude Code (substituting your real URLs):
+**Trigger:** Give Claude Code a Figma URL and a live page URL and ask for a QA report.
 
 ```
 Compare this Figma design to the live page and write a QA report:
@@ -49,22 +18,69 @@ Compare this Figma design to the live page and write a QA report:
 - Page: https://mysite.com/landing
 ```
 
-Claude Code will:
-1. Run `fetch_figma.py` → saves `design.png`
-2. Run `screenshot_page.py` → opens a visible Chrome window, navigates, saves `webpage.png`
-3. Read both images with its built-in vision and compare them
-4. Write `report.json` (structured discrepancies) and `report.md` (readable summary)
+### web-test-cloud
 
-## Scripts
+Cloud agent. Inspects any URL's accessibility tree with Playwright, writes a Playwright/pytest test suite, runs it with a fix-and-retry loop, and commits passing tests to a new branch.
 
-| Script | Purpose |
-|---|---|
-| `fetch_figma.py` | Fetches a Figma frame as a 2× PNG via the Figma REST API |
-| `screenshot_page.py` | Screenshots a live URL via Playwright (headed Chrome, 1440×900) |
+**Trigger (GitHub Actions):** Comment `/web-test` on an issue or PR, or trigger the `web-test-cloud` workflow manually with a URL.
 
-### Run scripts individually
+> **Access:** Only repo collaborators with write access can trigger this agent directly. Everyone else should fork the repo and add their own `CLAUDE_ACCESS_TOKEN` secret.
+
+---
+
+## Setup
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js (for Claude Code CLI)
+- A Figma Personal Access Token *(design-qa-local only)*
+
+### Install
 
 ```bash
-python fetch_figma.py --url "https://www.figma.com/design/abc123/...?node-id=1-2" --out design.png
-python screenshot_page.py --url "https://example.com" --out webpage.png
+git clone <repo-url>
+cd qaSkills
+
+pip install -r requirements.txt
+playwright install chromium
 ```
+
+### Configure
+
+```bash
+cp .env.example .env
+# Add your FIGMA_ACCESS_TOKEN (design-qa-local only)
+```
+
+Get a Figma token at: **figma.com → Settings → Security → Personal access tokens**
+
+### For web-test-cloud (GitHub Actions)
+
+Add a `CLAUDE_ACCESS_TOKEN` secret to your repo (Settings → Secrets → Actions). This is your Anthropic API key.
+
+---
+
+## Running design-qa-local
+
+```bash
+claude .
+```
+
+Then paste a prompt like:
+
+```
+Compare this Figma design to the live page and write a QA report:
+- Design: https://www.figma.com/design/abc123/...?node-id=1-2
+- Page: https://mysite.com/landing
+```
+
+## Running web-test-cloud
+
+Comment on any issue or PR:
+
+```
+/web-test https://example.com
+```
+
+Or trigger manually via GitHub Actions → `web-test-cloud` → Run workflow.
