@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Bash(gh workflow run *)",
       "Bash(.venv/bin/python *)",
       "Bash(rm /tmp/design.png /tmp/webpage.png /tmp/comparison.png)",
       "Bash(open report.html)",
