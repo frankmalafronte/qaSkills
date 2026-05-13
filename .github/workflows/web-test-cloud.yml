@@ -1,0 +1,48 @@
+name: Web E2E Tests (web-test-cloud)
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL to test
+        required: true
+      instructions:
+        description: Additional instructions (optional)
+        required: false
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Check collaborator permission
+        run: |
+          PERMISSION=$(gh api repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission --jq '.permission' 2>/dev/null || echo "none")
+          if [[ "$PERMISSION" != "admin" && "$PERMISSION" != "write" ]]; then
+            echo "::error::@${{ github.actor }} does not have write access. Fork the repo and use your own ANTHROPIC_API_KEY to run this agent."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - uses: anthropics/claude-code-action@beta
+        with:
+          claude_access_token: ${{ secrets.CLAUDE_ACCESS_TOKEN }}
+          trigger_phrase: "/web-test"
+          prompt: |
+            Run the web-test-cloud sub-agent.
+            URL: ${{ github.event.inputs.url }}
+            Instructions: ${{ github.event.inputs.instructions }}
