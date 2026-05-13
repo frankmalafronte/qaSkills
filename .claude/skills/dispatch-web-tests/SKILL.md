@@ -1,6 +1,6 @@
 ---
-name: web-test-cloud
-description: Generate Playwright E2E tests based on free-form instructions or recent code changes
+name: dispatch-web-tests
+description: Dispatch the web-test-cloud CI workflow to generate and run Playwright E2E tests for a URL
 ---
 
 The user wants to generate Playwright E2E tests. Their instructions (may be empty):
