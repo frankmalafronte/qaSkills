@@ -36,6 +36,11 @@ jobs:
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
 
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium
+
       - name: Run web-test-cloud agent
         run: |
           claude --agent web-test-cloud --verbose --max-turns 50 \
@@ -49,8 +54,9 @@ jobs:
       - name: Report token usage
         if: always()
         run: |
-          INPUT=$(grep '"type":"result"' /tmp/claude_output.jsonl 2>/dev/null | tail -1 | jq -r '.usage.input_tokens // 0')
-          OUTPUT=$(grep '"type":"result"' /tmp/claude_output.jsonl 2>/dev/null | tail -1 | jq -r '.usage.output_tokens // 0')
+          RESULT=$(jq -c 'select(.type == "result")' /tmp/claude_output.jsonl 2>/dev/null | tail -1)
+          INPUT=$(echo "$RESULT" | jq -r '.usage.input_tokens // 0')
+          OUTPUT=$(echo "$RESULT" | jq -r '.usage.output_tokens // 0')
           TOTAL=$((INPUT + OUTPUT))
           echo "## Token Usage" >> $GITHUB_STEP_SUMMARY
           echo "| | Tokens |" >> $GITHUB_STEP_SUMMARY

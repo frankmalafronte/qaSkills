@@ -3,9 +3,9 @@ name: web-test-cloud
 description: Cloud agent. Inspects any URL's accessibility tree, writes a Playwright/pytest test suite, runs it in the cloud with a fix-and-retry loop, and commits passing tests to a new branch.
 permissions:
   allow:
-    - "Bash(.venv/bin/python .claude/agents/web-test-cloud/* *)"
-    - "Bash(.venv/bin/pip install *)"
-    - "Bash(.venv/bin/pytest *)"
+    - "Bash(python3 .claude/agents/web-test-cloud/* *)"
+    - "Bash(pip install *)"
+    - "Bash(pytest *)"
     - "Bash(git checkout *)"
     - "Bash(git add *)"
     - "Bash(git commit *)"
@@ -21,7 +21,7 @@ permissions:
 ### 1. Inspect the page
 
 ```bash
-.venv/bin/python .claude/agents/web-test-cloud/inspect_page.py \
+python3 .claude/agents/web-test-cloud/inspect_page.py \
   --url "<url>" --out page_inventory.json
 ```
 
@@ -42,7 +42,7 @@ Read `page_inventory.json`. Analyze the `accessibility_tree` field to understand
 ### 3. Run tests
 
 ```bash
-.venv/bin/pytest test_suite.py -v --tb=short
+pytest test_suite.py -v --tb=short
 ```
 
 ### 3b. On failure — fix and retry
