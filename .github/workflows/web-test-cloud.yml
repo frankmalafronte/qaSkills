@@ -38,7 +38,7 @@ jobs:
 
       - name: Run web-test-cloud agent
         run: |
-          claude --agent web-test-cloud -p "URL: ${{ github.event.inputs.url }} Instructions: ${{ github.event.inputs.instructions }}"
+          claude --agent web-test-cloud --verbose -p "URL: ${{ github.event.inputs.url }} Instructions: ${{ github.event.inputs.instructions }}"
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ github.token }}
