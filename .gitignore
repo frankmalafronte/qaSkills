@@ -6,3 +6,4 @@ report.md
 __pycache__/
 *.pyc
 PLAN.md
+.claude/worktrees/
