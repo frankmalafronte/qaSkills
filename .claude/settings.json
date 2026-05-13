@@ -11,5 +11,20 @@
       "Bash(pip install*)",
       "Bash(playwright install*)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(npx playwright test *)",
+            "command": "jq -r 'if (.tool_response.exit_code // 0) != 0 then {\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"HOOK: Playwright tests failed. Do NOT proceed to step 5. Go to step 4b to collect a debug trace, then fix the failing tests and re-run step 4 before committing.\"}} | tojson else empty end'",
+            "statusMessage": "Verifying tests passed..."
+          }
+        ]
+      }
+    ]
   }
 }
