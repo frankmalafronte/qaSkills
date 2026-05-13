@@ -46,7 +46,22 @@ jobs:
           claude --agent web-test-cloud --verbose --max-turns 50 \
             --output-format stream-json \
             -p "URL: ${{ github.event.inputs.url }} Instructions: ${{ github.event.inputs.instructions }}" \
-            | tee /tmp/claude_output.jsonl
+            | tee /tmp/claude_output.jsonl \
+            | jq -r --unbuffered '
+                if .type == "assistant" then
+                  .message.content[] |
+                  if .type == "text" then .text
+                  elif .type == "tool_use" then "[\(.name)] \(.input | tojson | .[0:120])"
+                  else empty end
+                elif .type == "user" then
+                  .message.content[] |
+                  if .type == "tool_result" then
+                    if .is_error then "  → ERROR: \(.content // "" | .[0:200])"
+                    else "  → \(.content // "" | if type == "string" then . else tojson end | .[0:200])"
+                    end
+                  else empty end
+                else empty end
+              ' 2>/dev/null || true
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ github.token }}
