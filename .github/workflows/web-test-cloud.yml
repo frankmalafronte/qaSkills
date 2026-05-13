@@ -38,7 +38,23 @@ jobs:
 
       - name: Run web-test-cloud agent
         run: |
-          claude --agent web-test-cloud --verbose -p "URL: ${{ github.event.inputs.url }} Instructions: ${{ github.event.inputs.instructions }}"
+          claude --agent web-test-cloud --verbose --max-turns 50 \
+            --output-format stream-json \
+            -p "URL: ${{ github.event.inputs.url }} Instructions: ${{ github.event.inputs.instructions }}" \
+            | tee /tmp/claude_output.jsonl
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ github.token }}
+
+      - name: Report token usage
+        if: always()
+        run: |
+          INPUT=$(grep '"type":"result"' /tmp/claude_output.jsonl 2>/dev/null | tail -1 | jq -r '.usage.input_tokens // 0')
+          OUTPUT=$(grep '"type":"result"' /tmp/claude_output.jsonl 2>/dev/null | tail -1 | jq -r '.usage.output_tokens // 0')
+          TOTAL=$((INPUT + OUTPUT))
+          echo "## Token Usage" >> $GITHUB_STEP_SUMMARY
+          echo "| | Tokens |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Input | $INPUT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Output | $OUTPUT |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Total** | **$TOTAL** |" >> $GITHUB_STEP_SUMMARY

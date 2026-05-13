@@ -49,13 +49,26 @@ Read `page_inventory.json`. Analyze the `accessibility_tree` field to understand
 
 If step 3 failed, read the pytest output to identify failing tests and their error traces. Fix only the test code (never the app). Re-run step 3. Repeat up to **3 attempts total**. If tests still fail after 3 attempts, stop and report all failures clearly.
 
-### 4. Commit tests to a new branch
+### 4. Write run_summary.md
 
-Create a branch with a descriptive name, commit `test_suite.py`, and push:
+Before committing, write a `run_summary.md` file:
+
+```
+# Run Summary
+- URL: <url>
+- Tests: <N passed>, <N failed>
+- Retries: <N>
+- Branch: <branch>
+- Token usage: see GitHub Actions step summary
+```
+
+### 5. Commit tests to a new branch
+
+Create a branch with a descriptive name, commit all new files, and push:
 
 ```bash
 git checkout -b <branch>
-git add test_suite.py
+git add -A
 git commit -m "test: add E2E tests for <url>"
 git push -u origin <branch>
 ```
