@@ -1,6 +1,7 @@
 ---
 name: dispatch-web-tests
 description: Dispatch the web-test-cloud CI workflow to generate and run Playwright E2E tests for a URL
+disable-model-invocation: true
 ---
 
 The user wants to generate Playwright E2E tests. Their instructions (may be empty):

@@ -55,8 +55,13 @@ jobs:
         if: always()
         run: |
           RESULT=$(jq -c 'select(.type == "result")' /tmp/claude_output.jsonl 2>/dev/null | tail -1)
-          INPUT=$(echo "$RESULT" | jq -r '.usage.input_tokens // 0')
-          OUTPUT=$(echo "$RESULT" | jq -r '.usage.output_tokens // 0')
+          if [ -n "$RESULT" ]; then
+            INPUT=$(echo "$RESULT" | jq -r '.usage.input_tokens // 0')
+            OUTPUT=$(echo "$RESULT" | jq -r '.usage.output_tokens // 0')
+          else
+            INPUT=$(jq -r 'select(.type == "assistant") | .message.usage | ((.input_tokens // 0) + (.cache_read_input_tokens // 0) + (.cache_creation_input_tokens // 0))' /tmp/claude_output.jsonl 2>/dev/null | awk '{s+=$1} END {print s+0}')
+            OUTPUT=$(jq -r 'select(.type == "assistant") | (.message.usage.output_tokens // 0)' /tmp/claude_output.jsonl 2>/dev/null | awk '{s+=$1} END {print s+0}')
+          fi
           TOTAL=$((INPUT + OUTPUT))
           echo "## Token Usage" >> $GITHUB_STEP_SUMMARY
           echo "| | Tokens |" >> $GITHUB_STEP_SUMMARY
