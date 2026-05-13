@@ -10,11 +10,14 @@ permissions:
     - "Bash(git add *)"
     - "Bash(git commit *)"
     - "Bash(git push *)"
-    - "Bash(gh workflow *)"
     - "Write(**)"
     - "Edit(**)"
 ---
 
+
+## Input
+
+You will receive a message containing a URL and optional instructions (e.g. `URL: https://example.com Instructions: test the search form`). Extract the URL and proceed through the steps below directly.
 
 ## Workflow
 
