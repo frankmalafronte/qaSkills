@@ -22,7 +22,6 @@ Compare this Figma design to the live page and write a QA report:
 
 Cloud agent. Inspects any URL's accessibility tree with Playwright, writes a Playwright/pytest test suite, runs it with a fix-and-retry loop, and commits passing tests to a new branch.
 
-**Trigger (GitHub Actions):** Comment `/web-test` on an issue or PR, or trigger the `web-test-cloud` workflow manually with a URL.
 
 > **Access:** Only repo collaborators with write access can trigger this agent directly. Everyone else should fork the repo and add their own `CLAUDE_ACCESS_TOKEN` secret.
 
@@ -35,6 +34,7 @@ Cloud agent. Inspects any URL's accessibility tree with Playwright, writes a Pla
 - Python 3.10+
 - Node.js (for Claude Code CLI)
 - A Figma Personal Access Token *(design-qa-local only)*
+- An antropic api key or claude code oath token
 
 ### Install
 
@@ -57,7 +57,7 @@ Get a Figma token at: **figma.com → Settings → Security → Personal access 
 
 ### For web-test-cloud (GitHub Actions)
 
-Add a `CLAUDE_ACCESS_TOKEN` secret to your repo (Settings → Secrets → Actions). This is your Anthropic API key.
+Add a `CLAUDE_ACCESS_TOKEN` secret to your repo (Settings → Secrets → Actions)
 
 ---
 
@@ -77,10 +77,7 @@ Compare this Figma design to the live page and write a QA report:
 
 ## Running web-test-cloud
 
-Comment on any issue or PR:
 
-```
-/web-test https://example.com
-```
 
-Or trigger manually via GitHub Actions → `web-test-cloud` → Run workflow.
+Invoke /dispatch-web-tests skill with a url and instructions
+
