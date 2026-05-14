@@ -32,12 +32,44 @@ This captures the page's accessibility tree (YAML) and a full-page screenshot in
 
 ### 2. Write test_suite.py
 
-Read `page_inventory.json`. Analyze the `accessibility_tree` field to understand the page structure, then write `test_suite.py` — a pytest file with these characteristics:
+Read `page_inventory.json`. Analyze the `accessibility_tree` field to understand the page structure, then write `test_suite.py` — a pytest file covering **3–5 critical user flows** from the instructions.
 
+
+**Assertion rules:**
+- Use web-first assertions: `expect(locator).to_have_url()`, `expect(locator).to_have_text()`, `expect(locator).to_contain_text()`, `expect(locator).to_be_enabled()`
+- `expect(locator).to_be_visible()` is only valid as a **precondition** before an interaction, never as the final assertion
+- No `page.wait_for_timeout()` — use condition-based waits only
+
+**Locators:**
+- `page.get_by_role()`, `page.get_by_label()`, `page.get_by_text()` — never CSS selectors or XPath
+
+**Anti-patterns to reject:**
+- Tests that only check an element is visible with no interaction
+- Tests checking static content (footer text, logo presence, nav link existence)
+- Multiple unrelated assertions in one test
+
+
+**Bad — presence only, no interaction, worthless:**
+```python
+def test_gmail_link_visible():
+    page.goto(BASE_URL)
+    expect(page.get_by_role("link", name="Gmail")).to_be_visible()
+```
+
+**Good — interaction + behavioral outcome:**
+```python
+def test_search_returns_results():
+    page.goto(BASE_URL)
+    page.get_by_role("combobox", name="Search").fill("hello world")
+    page.get_by_role("combobox", name="Search").press("Enter")
+    page.wait_for_url("**/search?**")
+    expect(page).to_have_url(re.compile(r"q=hello"))
+    expect(page.get_by_role("main")).to_contain_text("hello")
+```
+
+**Boilerplate requirements:**
 - Use `playwright.sync_api` with `sync_playwright`
-- Prefer `page.get_by_role()`, `page.get_by_label()`, `page.get_by_text()` over CSS selectors
-- One test function per meaningful interaction: page load, navigation links, search, CTAs, forms, etc.
-- Each test is fully independent: launch browser, navigate to URL, assert, close
+- Each test is fully independent: launch browser, navigate to URL, interact, assert, close
 - Always use `headless=True` for all `sync_playwright` browser launches
 - Use `pytest.mark.parametrize` only if multiple inputs share identical steps
 - Import the URL from a constant at the top of the file: `BASE_URL = "<url>"`
